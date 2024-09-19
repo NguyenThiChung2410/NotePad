@@ -5,14 +5,25 @@
 package gui;
 
 import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
@@ -26,7 +37,7 @@ public class JNotePad extends JFrame {
     private JMenuItem itemFont, itemZoomIn, itemZoomOut, itemRestore, itemViewHelp, itemSendFeedback, itemaboutNotepad;
     private JCheckBoxMenuItem itemWrap, itemStatusBar;
     private JTextArea txtEditor;
-
+    
     int size = 20;
 
     public JNotePad(String title) {
@@ -62,7 +73,7 @@ public class JNotePad extends JFrame {
         mEdit.addSeparator();
         mEdit.add(itemCut = new JMenuItem("Cut"));
         mEdit.add(itemCopy = new JMenuItem("Copy"));
-        mEdit.add(itemPast = new JMenuItem("Past"));
+        mEdit.add(itemPast = new JMenuItem("Paste"));
         mEdit.add(itemDelete = new JMenuItem("Delete"));
         mEdit.addSeparator();
         mEdit.add(itemSearch = new JMenuItem("Search with Bing..."));
@@ -150,5 +161,115 @@ public class JNotePad extends JFrame {
                 txtEditor.setFont(new Font("Arial", Font.PLAIN, 20));
             }
         });
+        itemOpen.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openFile();
+            }
+        });
+        itemSave.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveFile();
+            }
+
+        });
+        itemSaveAs.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveAsFile();
+            }
+
+        });
+        itemExit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Exit();
+            }
+
+        });
+
+        itemCopy.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Copy();
+            }
+
+        });
+        itemPast.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Paste();
+            }
+
+        });
+        itemWrap.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(itemWrap.isSelected()){
+                    txtEditor.setLineWrap(true);
+                }else{
+                    txtEditor.setLineWrap(false);
+                }
+            }
+        });
+    }
+
+    private void openFile() {
+        JFileChooser dlgFile = new JFileChooser();
+        if (dlgFile.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            try {
+                FileInputStream fis = new FileInputStream(dlgFile.getSelectedFile());
+                byte[] b = new byte[fis.available()];
+                fis.read(b);
+                txtEditor.setText(new String(b));
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, " Lỗi đọc File");
+            }
+        }
+    }
+
+    private void saveFile() {
+        JFileChooser dlgFile = new JFileChooser();
+        if (dlgFile.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            try {
+                FileOutputStream fos = new FileOutputStream(dlgFile.getSelectedFile());
+                fos.write(txtEditor.getText().getBytes());
+                fos.close();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Lỗi ghi file: " + ex.getMessage());
+            }
+        }
+    }
+
+    private void saveAsFile() {
+
+    }
+
+    private void Exit() {
+        if (JOptionPane.showConfirmDialog(null, "Bạn chắc chắn muốn thoát chứ?") == JOptionPane.YES_OPTION) {
+            System.exit(0);
+        }
+    }
+
+    private void Copy() {
+        String selectedText = txtEditor.getSelectedText();
+        if (selectedText != null && !selectedText.isEmpty()) {
+            StringSelection stringSelection = new StringSelection(selectedText);
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(stringSelection, null);
+        } else {
+            JOptionPane.showMessageDialog(txtEditor, "Không có nội dung để sao chép!!!");
+        }
+    }
+
+    private void Paste() {
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            try {
+                String pastedText = (String) clipboard.getData(DataFlavor.stringFlavor);
+                txtEditor.insert(pastedText, txtEditor.getCaretPosition()); 
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(txtEditor, "Lỗi dán nội dung: " + ex.getMessage());
+            }
     }
 }
