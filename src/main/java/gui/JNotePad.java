@@ -37,7 +37,7 @@ public class JNotePad extends JFrame {
     private JMenuItem itemFont, itemZoomIn, itemZoomOut, itemRestore, itemViewHelp, itemSendFeedback, itemaboutNotepad;
     private JCheckBoxMenuItem itemWrap, itemStatusBar;
     private JTextArea txtEditor;
-    
+
     int size = 20;
 
     public JNotePad(String title) {
@@ -206,9 +206,9 @@ public class JNotePad extends JFrame {
         itemWrap.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                if(itemWrap.isSelected()){
+                if (itemWrap.isSelected()) {
                     txtEditor.setLineWrap(true);
-                }else{
+                } else {
                     txtEditor.setLineWrap(false);
                 }
             }
@@ -243,7 +243,16 @@ public class JNotePad extends JFrame {
     }
 
     private void saveAsFile() {
-
+        JFileChooser dlgFile = new JFileChooser();
+        if (dlgFile.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            try {
+                FileOutputStream fos = new FileOutputStream(dlgFile.getSelectedFile());
+                fos.write(txtEditor.getText().getBytes());
+                fos.close();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Lỗi ghi file: " + ex.getMessage());
+            }
+        }
     }
 
     private void Exit() {
@@ -265,11 +274,11 @@ public class JNotePad extends JFrame {
 
     private void Paste() {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            try {
-                String pastedText = (String) clipboard.getData(DataFlavor.stringFlavor);
-                txtEditor.insert(pastedText, txtEditor.getCaretPosition()); 
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(txtEditor, "Lỗi dán nội dung: " + ex.getMessage());
-            }
+        try {
+            String pastedText = (String) clipboard.getData(DataFlavor.stringFlavor);
+            txtEditor.insert(pastedText, txtEditor.getCaretPosition());
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(txtEditor, "Lỗi dán nội dung: " + ex.getMessage());
+        }
     }
 }
