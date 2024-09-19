@@ -4,7 +4,9 @@
  */
 package gui;
 
+import java.awt.BorderLayout;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -17,6 +19,8 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -26,6 +30,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 
 public class JNotePad extends JFrame {
@@ -37,6 +42,8 @@ public class JNotePad extends JFrame {
     private JMenuItem itemFont, itemZoomIn, itemZoomOut, itemRestore, itemViewHelp, itemSendFeedback, itemaboutNotepad;
     private JCheckBoxMenuItem itemWrap, itemStatusBar;
     private JTextArea txtEditor;
+    private JToolBar toolbar;
+    private JButton btNew,btOpen,btSave;
 
     int size = 20;
 
@@ -44,6 +51,7 @@ public class JNotePad extends JFrame {
         super(title);
         createMenu();
         createGUI();
+        createToolBar();
         processEvent();
         setSize(700, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -213,6 +221,12 @@ public class JNotePad extends JFrame {
                 }
             }
         });
+        btOpen.addItemListener((e) -> {
+            openFile();
+        });
+        btSave.addItemListener((e) -> {
+            openFile();
+        });
     }
 
     private void openFile() {
@@ -280,5 +294,18 @@ public class JNotePad extends JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(txtEditor, "Lỗi dán nội dung: " + ex.getMessage());
         }
+    }
+
+    private void createToolBar() {
+        toolbar=new JToolBar();
+        toolbar.add(btNew=new JButton("New"));
+        toolbar.add(btOpen=new JButton("Open"));
+        toolbar.add(btSave=new JButton("Save"));
+        
+        btNew.setIcon(new ImageIcon(this.getClass().getResource("/images/new.png")));
+        btOpen.setIcon(new ImageIcon(this.getClass().getResource("/images/open.png")));
+        btSav.setIcon(new ImageIcon(this.getClass().getResource("/images/save.png")));
+        
+        add(toolbar, BorderLayout.NORTH);
     }
 }
