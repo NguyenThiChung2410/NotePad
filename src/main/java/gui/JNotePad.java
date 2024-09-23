@@ -6,7 +6,6 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -16,7 +15,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import javax.swing.ImageIcon;
@@ -221,11 +219,17 @@ public class JNotePad extends JFrame {
                 }
             }
         });
-        btOpen.addItemListener((e) -> {
-            openFile();
+        btOpen.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openFile();
+            }
         });
-        btSave.addItemListener((e) -> {
-            openFile();
+        btSave.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveFile();
+            }
         });
     }
 
@@ -304,7 +308,7 @@ public class JNotePad extends JFrame {
         
         btNew.setIcon(new ImageIcon(this.getClass().getResource("/images/new.png")));
         btOpen.setIcon(new ImageIcon(this.getClass().getResource("/images/open.png")));
-        btSav.setIcon(new ImageIcon(this.getClass().getResource("/images/save.png")));
+        btSave.setIcon(new ImageIcon(this.getClass().getResource("/images/save.png")));
         
         add(toolbar, BorderLayout.NORTH);
     }
